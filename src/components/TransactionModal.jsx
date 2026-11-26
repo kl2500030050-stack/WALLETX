@@ -1,0 +1,10 @@
+import { X, Download } from 'lucide-react'
+import { money } from '../utils/storage'
+export default function TransactionModal({ tx, onClose }) {
+  if(!tx) return null
+  const receipt = () => {
+    const content = `MONETA — PAYMENT RECEIPT\nTransaction: ${tx.id}\nDescription: ${tx.title}\nCategory: ${tx.category}\nAmount: ${money(tx.amount)}\nType: ${tx.type}\nDate: ${new Date(tx.date).toLocaleString()}\nStatus: ${tx.status}\nNote: ${tx.note||'-'}`
+    const url=URL.createObjectURL(new Blob([content],{type:'text/plain'})); const a=document.createElement('a'); a.href=url; a.download=`${tx.id}-receipt.txt`; a.click(); URL.revokeObjectURL(url)
+  }
+  return <div className="fixed inset-0 z-[80] grid place-items-center bg-slate-950/50 p-4" onClick={onClose}><div className="panel w-full max-w-md p-6 shadow-2xl" onClick={e=>e.stopPropagation()}><div className="mb-5 flex items-center justify-between"><h3 className="text-lg font-extrabold dark:text-white">Transaction details</h3><button onClick={onClose}><X size={20}/></button></div><div className="mb-5 text-center"><div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-2xl bg-[#efedff] text-2xl text-[#6258df]">₹</div><div className="text-3xl font-extrabold dark:text-white">{tx.type==='credit'?'+':'−'}{money(tx.amount)}</div><div className="mt-1 text-sm text-slate-400">{tx.title}</div><span className="mt-3 inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-600">{tx.status}</span></div><div className="space-y-3 rounded-xl bg-slate-50 p-4 text-sm dark:bg-slate-800">{[['Transaction ID',tx.id],['Category',tx.category],['Date',new Date(tx.date).toLocaleString()],['Type',tx.type],['Note',tx.note||'—']].map(([k,v])=><div key={k} className="flex justify-between gap-3"><span className="text-slate-400">{k}</span><span className="text-right font-semibold dark:text-slate-100">{v}</span></div>)}</div><button onClick={receipt} className="btn-primary mt-5 flex w-full items-center justify-center gap-2"><Download size={17}/>Download receipt</button></div></div>
+}
